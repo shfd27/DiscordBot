@@ -35,11 +35,13 @@ class Music(commands.Cog, name="music"):
 
     @commands.command()
     async def leave(self, ctx):
-        if ctx.guild.voice_client!=None:
+        bot_voice_client=get(self.bot.voice_clients, guild=ctx.guild)
+        if bot_voice_client!=None:
+            bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
             await ctx.guild.voice_client.disconnect()
-            await ctx.message.channel.send("Leave from channel **"+str(ctx.message.author.voice.channel)+"**!")
+            await ctx.message.channel.send("Leave from channel **"+str(bot_class_Member.voice.channel)+"**!")
         else:
-            await ctx.message.channel.send("You are not in voice_channel!")
+            await ctx.message.channel.send("Bot is not in voice_channel!")
 
 
 def setup(bot):
