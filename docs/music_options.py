@@ -14,6 +14,6 @@ ytdl_options = {
 	"source_address": "0.0.0.0"
 }
 
-ffmpeg_options = {"options": "-vn"}
+options="-vn"
 
-before_args = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+before_options = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"

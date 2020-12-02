@@ -6,11 +6,17 @@ from configs import configs
 from docs import music_options
 
 
+
 def search_to_data(search):
+    data={}
+    keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
     import youtube_dl
     ytdl = youtube_dl.YoutubeDL(music_options.ytdl_options)
-    data=ytdl.extract_info(search, download=False)
-    data=data["entries"][0]
+    raw_data=ytdl.extract_info(search, download=False)
+    if "entries" in raw_data:   #search is not url
+        raw_data=raw_data["entries"][0]
+    for key in keys:
+        data[key]=raw_data[key]
     return data
 
 
@@ -52,6 +58,7 @@ class Music(commands.Cog, name="music"):
         else:
             await ctx.message.channel.send("Bot is not in voice_channel!")
 
+
     @commands.command()
     async def play(self, ctx, *, search):
         if ctx.message.author.voice!=None:
@@ -70,11 +77,10 @@ class Music(commands.Cog, name="music"):
             raise commands.CommandError("Author is not in voice_channel...")
         
         data=search_to_data(search)
+
+        source=discord.FFmpegPCMAudio(data["url"], before_options=music_options.before_options, options=music_options.options)
+        ctx.voice_client.play(source, after=lambda s: Music.play_after(ctx))
         
-
-
-
-
 
 
 def setup(bot):
