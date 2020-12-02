@@ -4,7 +4,11 @@ from discord.ext import commands
 from discord.utils import get
 from configs import configs
 from docs import music_options
+import urllib.request
+import datetime
 
+API_KEY = music_options.API_KEY
+music_data={}
 
 
 def search_to_data(search):
@@ -46,6 +50,7 @@ class Music(commands.Cog, name="music"):
                     await ctx.message.channel.send("Move to channel **"+str(ctx.message.author.voice.channel)+"**!")
         else:
             await ctx.message.channel.send("You are not in voice_channel!")
+        print(music_data)
 
 
     @commands.command()
@@ -66,7 +71,6 @@ class Music(commands.Cog, name="music"):
             channel=ctx.message.author.voice.channel
             if bot_voice_client==None:
                 await channel.connect()
-                await ctx.message.channel.send("Join to channel **"+str(ctx.message.author.voice.channel)+"**!")
             else:
                 if self.bot.user not in channel.members:
                     bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
@@ -77,10 +81,30 @@ class Music(commands.Cog, name="music"):
             raise commands.CommandError("Author is not in voice_channel...")
         
         data=search_to_data(search)
+        if ctx.guild.id not in music_data.keys():
+            music_data[ctx.guild.id]=[]
+        if not music_data[ctx.guild.id]:
+            source=discord.FFmpegPCMAudio(data["url"], before_options=music_options.before_options, options=music_options.options)
+            ctx.voice_client.play(source, after=lambda s: self.play_after(ctx))
+            music_data[ctx.guild.id].append(data)
+            await ctx.message.channel.send(f"Playing **{data['title']}**!")
+        else:
+            await ctx.message.channel.send(f"Queuing **{data['title']}**!")
+            music_data[ctx.guild.id].append(data)
 
-        source=discord.FFmpegPCMAudio(data["url"], before_options=music_options.before_options, options=music_options.options)
-        ctx.voice_client.play(source, after=lambda s: Music.play_after(ctx))
-        
+
+    def play_after(self,ctx):
+        music_data[ctx.guild.id].pop(0)
+        if music_data[ctx.guild.id]:
+            self.bot.loop.create_task(ctx.message.channel.send(f"Playing **{music_data[ctx.guild.id][0]['title']}**!"))
+            source=discord.FFmpegPCMAudio(music_data[ctx.guild.id][0]["url"], before_options=music_options.before_options, options=music_options.options)
+            ctx.voice_client.play(source, after=lambda s: self.play_after(ctx))
+        else:
+            music_data[ctx.guild.id].clear()
+            bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+            self.bot.loop.create_task("Leave from "+str(bot_class_Member.voice.channel)+"**!")
+            self.bot.loop.create_task(ctx.voice_client.disconnect())
+
 
 
 def setup(bot):
