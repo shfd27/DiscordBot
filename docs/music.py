@@ -123,6 +123,16 @@ class Music(commands.Cog, name="music"):
                 self.bot.loop.create_task(ctx.voice_client.disconnect())
 
 
+    @commands.command()
+    async def q(self,ctx):
+        data=music_data[ctx.guild.id]
+        await ctx.message.channel.send("**QUEUE LIST**")
+        titles=""
+        for k in range(len(data)):
+            titles+=str(k)+". "+str(data[k]["title"])+"\n"
+        await ctx.message.channel.send("`"+titles+"`")
+
+
 
 def setup(bot):
     bot.add_cog(Music(bot))
