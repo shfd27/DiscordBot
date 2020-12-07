@@ -1,8 +1,8 @@
 # DiscordBot
 DiscordBot with Python
 
-#1
+# 1
 test1
 
-#2
+# 2
 test2
