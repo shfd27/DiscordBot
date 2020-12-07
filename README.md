@@ -2,7 +2,7 @@
 DiscordBot with Python
 
 # About
-The bot works on the Discord!
+The bot works on the Discord!  
 music.py - playing youtube music is available.
 
 # Installation
