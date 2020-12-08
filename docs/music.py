@@ -69,15 +69,23 @@ class Music(commands.Cog, name="music"):
 
     @commands.command()
     async def leave(self, ctx):
-        if music_data[ctx.guild.id]:
-            music_data[ctx.guild.id].clear()
-        bot_voice_client=get(self.bot.voice_clients, guild=ctx.guild)
-        if bot_voice_client!=None:
-            bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
-            await ctx.guild.voice_client.disconnect()
-            await ctx.message.channel.send("Leave from channel **"+str(bot_class_Member.voice.channel)+"**!")
+        if ctx.message.author.voice!=None:
+            bot_voice_client=get(self.bot.voice_clients, guild=ctx.guild)
+            channel=ctx.message.author.voice.channel
+            if bot_voice_client==None:
+                await ctx.message.channel.send("Bot is not in voice_channel!")
+            else:
+                if self.bot.user in channel.members:
+                    if music_data[ctx.guild.id]:
+                        music_data[ctx.guild.id].clear()
+                    bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+                    await ctx.guild.voice_client.disconnect()
+                    await ctx.message.channel.send("Leave from channel **"+str(bot_class_Member.voice.channel)+"**!")
+                else:
+                    bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+                    await ctx.message.channel.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
         else:
-            await ctx.message.channel.send("Bot is not in voice_channel!")
+            await ctx.message.channel.send("You are not in voice_channel!")
 
 
     @commands.command()
