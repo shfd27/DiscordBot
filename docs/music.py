@@ -151,6 +151,52 @@ class Music(commands.Cog, name="music"):
 
 
     @commands.command()
+    async def pause(self, ctx):
+        if ctx.message.author.voice!=None:
+            bot_voice_client=get(self.bot.voice_clients, guild=ctx.guild)
+            channel=ctx.message.author.voice.channel
+            if bot_voice_client==None:
+                await ctx.message.channel.send("Bot is not in voice_channel!")
+            else:
+                if self.bot.user in channel.members:
+                    if ctx.guild.voice_client.is_playing():
+                        print("pause pass")
+                        data=music_data[ctx.guild.id][0]
+                        await ctx.message.channel.send("pause song **"+str(data["title"])+"**!")
+                        bot_voice_client.pause()
+                    else:
+                        await ctx.message.channel.send("Bot is not playing song!")
+                else:
+                    bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+                    await ctx.message.channel.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
+        else:
+            await ctx.message.channel.send("You are not in voice_channel!")
+
+
+    @commands.command()
+    async def resume(self, ctx):
+        if ctx.message.author.voice!=None:
+            bot_voice_client=get(self.bot.voice_clients, guild=ctx.guild)
+            channel=ctx.message.author.voice.channel
+            if bot_voice_client==None:
+                await ctx.message.channel.send("Bot is not in voice_channel!")
+            else:
+                if self.bot.user in channel.members:
+                    if ctx.guild.voice_client.is_paused():
+                        print("resume pass")
+                        data=music_data[ctx.guild.id][0]
+                        await ctx.message.channel.send("resume song **"+str(data["title"])+"**!")
+                        bot_voice_client.resume()
+                    else:
+                        await ctx.message.channel.send("Bot is not paused song now!")
+                else:
+                    bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+                    await ctx.message.channel.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
+        else:
+            await ctx.message.channel.send("You are not in voice_channel!")
+
+
+    @commands.command()
     async def q(self,ctx):
         data=music_data[ctx.guild.id]
         await ctx.message.channel.send("**QUEUE LIST**")
