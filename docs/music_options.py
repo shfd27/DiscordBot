@@ -18,4 +18,4 @@ options="-vn"
 
 before_options = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
 
-API_KEY = '{YOUTUBE_API_KEY}'
+API_KEY = 'AIzaSyAvq1EIVlJG0qjvxfemKBJ57vVlg5FlV5Y'#'{YOUTUBE_API_KEY}'
