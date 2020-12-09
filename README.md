@@ -53,6 +53,12 @@ leave : leave the voice channel
 
 play {search} : search {search} source at youtube and play source  
 
+pause : pause the play source
+
+resume : resume the play source
+
+skip : skip the play source  
+
 q : show current queue  
 
 # Join Community
