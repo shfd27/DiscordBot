@@ -217,9 +217,7 @@ class Music(commands.Cog, name="music"):
         else:
             await ctx.message.channel.send("No song on queue!")
 
-    @commands.command()
-    async def dele(self,ctx):
-        music_data[ctx.guild.id].pop(0)
+
 
 def setup(bot):
     bot.add_cog(Music(bot))
