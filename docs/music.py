@@ -11,14 +11,20 @@ API_KEY = music_options.API_KEY
 music_data={}
 
 
-def search_to_data(search):
+def search_to_data(self, ctx, search):
     data={}
     keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
     import youtube_dl
     ytdl = youtube_dl.YoutubeDL(music_options.ytdl_options)
     raw_data=ytdl.extract_info(search, download=False)
     if "entries" in raw_data:   #search is not url
-        raw_data=raw_data["entries"][0]
+        raw_data=raw_data["entries"]
+    if raw_data:
+        raw_data=raw_data[0]
+    else:
+        print("pass")
+        self.bot.loop.create_task(ctx.message.channel.send("No song detected for **"+str(search)+"**!"))
+        raise Exception("No song from search...")
     for key in keys:
         data[key]=raw_data[key]
     return data
@@ -104,7 +110,7 @@ class Music(commands.Cog, name="music"):
             await ctx.message.channel.send("You are not in voice_channel!")
             raise commands.CommandError("Author is not in voice_channel...")
         
-        data=search_to_data(search)
+        data=search_to_data(self, ctx, search)
         if ctx.guild.id not in music_data.keys():
             music_data[ctx.guild.id]=[]
         if not music_data[ctx.guild.id]:
