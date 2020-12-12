@@ -3,7 +3,8 @@ DiscordBot with Python
 
 # About
 ### The bot works on the Discord!  
-music.py - playing youtube music is available. you need Youtube API.
+Try my discord bot [seol bot](https://discord.com/api/oauth2/authorize?client_id=688395885259784212&permissions=0&scope=bot)!
+music.py - playing youtube music is available. you need Youtube API.  
 
 # Installation
 ### install python
