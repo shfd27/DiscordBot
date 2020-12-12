@@ -19,12 +19,11 @@ def search_to_data(self, ctx, search):
     raw_data=ytdl.extract_info(search, download=False)
     if "entries" in raw_data:   #search is not url
         raw_data=raw_data["entries"]
-    if raw_data:
-        raw_data=raw_data[0]
-    else:
-        print("pass")
-        self.bot.loop.create_task(ctx.message.channel.send("No song detected for **"+str(search)+"**!"))
-        raise Exception("No song from search...")
+        if raw_data:
+            raw_data=raw_data[0]
+        else:
+            self.bot.loop.create_task(ctx.message.channel.send("No song detected for **"+str(search)+"**!"))
+            raise Exception("No song from search...")
     for key in keys:
         data[key]=raw_data[key]
     return data
