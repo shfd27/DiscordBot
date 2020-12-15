@@ -21,7 +21,7 @@ and docs/music_options.py(YOUTUBE_API_KEY)
 #### for windows
 3.download ffmpeg from ffmpeg.  
 4.unzip ffmpeg  
-5.open command shell as an administrator and enter setx Path "%Path%; &lt your ffmpeg dir path &gt \bin"  
+5.open command shell as an administrator and enter setx Path "%Path%; &lt; your ffmpeg dir path &gt; \bin"  
 (or set ffmpeg dir path to Environment Variables-User variables Path)  
 
 #### for linux
