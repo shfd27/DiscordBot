@@ -12,12 +12,16 @@ music.py - playing youtube music is available. you need Youtube API.
 1.install python which version is more than 3.6  
 2.install pakages below using pip  
 
+### Configuration  
+Set configs/configs.py using sample_configs.py  
+and docs/music_options.py(YOUTUBE_API_KEY)
+
 ### download ffmpeg
 
 #### for windows
 3.download ffmpeg from ffmpeg.  
 4.unzip ffmpeg  
-5.open command shell as an administrator and enter setx Path "%Path%;<your ffmpeg dir path>\bin"  
+5.open command shell as an administrator and enter setx Path "%Path%; &lt your ffmpeg dir path &gt \bin"  
 (or set ffmpeg dir path to Environment Variables-User variables Path)  
 
 #### for linux
