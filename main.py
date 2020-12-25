@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 #import configs
 bot_name=configs.bot_name
+
 TOKEN=configs.TOKEN
 PREFIX=configs.PREFIX
 

@@ -64,7 +64,7 @@ class Music(commands.Cog, name="music"):
                 await ctx.message.channel.send("Join to channel **"+str(ctx.message.author.voice.channel)+"**!")
             else:
                 if self.bot.user in channel.members:
-                    await ctx.message.channel.send("You are already in channel **"+str(ctx.message.author.voice.channel)+"**!")
+                    await ctx.message.channel.send("Bot is already in channel **"+str(ctx.message.author.voice.channel)+"**!")
                 else:
                     await bot_voice_client.move_to(ctx.message.author.voice.channel)
                     await ctx.message.channel.send("Move to channel **"+str(ctx.message.author.voice.channel)+"**!")
@@ -81,8 +81,9 @@ class Music(commands.Cog, name="music"):
                 await ctx.message.channel.send("Bot is not in voice_channel!")
             else:
                 if self.bot.user in channel.members:
-                    if music_data[ctx.guild.id]:
-                        music_data[ctx.guild.id].clear()
+                    if ctx.guild.id in music_data:
+                        if music_data[ctx.guild.id]:
+                            music_data[ctx.guild.id].clear()
                     bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
                     await ctx.guild.voice_client.disconnect()
                     await ctx.message.channel.send("Leave from channel **"+str(bot_class_Member.voice.channel)+"**!")
@@ -145,9 +146,15 @@ class Music(commands.Cog, name="music"):
                 await ctx.message.channel.send("Bot is not in voice_channel!")
             else:
                 if self.bot.user in channel.members:
-                    data=music_data[ctx.guild.id][0]
-                    await ctx.message.channel.send("skip song **"+str(data["title"])+"**!")
-                    ctx.voice_client.stop()
+                    if ctx.guild.id in music_data:
+                        if music_data[ctx.guild.id]!=None:
+                            data=music_data[ctx.guild.id][0]
+                            await ctx.message.channel.send("skip song **"+str(data["title"])+"**!")
+                            ctx.voice_client.stop()
+                        else:
+                            await ctx.message.channel.send("Bot is not playing music!")
+                    else:
+                        await ctx.message.channel.send("Bot is not playing music!")
                 else:
                     bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
                     await ctx.message.channel.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
@@ -165,7 +172,6 @@ class Music(commands.Cog, name="music"):
             else:
                 if self.bot.user in channel.members:
                     if ctx.guild.voice_client.is_playing():
-                        print("pause pass")
                         data=music_data[ctx.guild.id][0]
                         await ctx.message.channel.send("pause song **"+str(data["title"])+"**!")
                         bot_voice_client.pause()
@@ -188,7 +194,6 @@ class Music(commands.Cog, name="music"):
             else:
                 if self.bot.user in channel.members:
                     if ctx.guild.voice_client.is_paused():
-                        print("resume pass")
                         data=music_data[ctx.guild.id][0]
                         await ctx.message.channel.send("resume song **"+str(data["title"])+"**!")
                         bot_voice_client.resume()
