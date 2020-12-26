@@ -72,4 +72,4 @@ DiscordBot is developed currently. If you need help or want to give some advices
 <a href="http://join.shfd27.p-e.kr"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Discord-512.webp/512px-Discord-512.webp.png" height="35px" width="35px"></a>
 
 # Version
-`1.0.0`
+`1.1.0`

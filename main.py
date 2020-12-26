@@ -8,7 +8,7 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-#import configs
+# import configs
 bot_name=configs.bot_name
 
 TOKEN=configs.TOKEN
@@ -17,9 +17,8 @@ PREFIX=configs.PREFIX
 bot = commands.Bot(command_prefix=PREFIX)
 
 
-#import music module
+# import music module
 bot.load_extension("docs.music")
-
 
 
 @bot.event
@@ -30,6 +29,5 @@ async def on_ready():
 
 
 
-
-#run bot
+# run bot
 bot.run(TOKEN)
