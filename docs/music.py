@@ -139,7 +139,7 @@ class Music(commands.Cog, name="music"):
         if self.bot.user in ctx.message.author.voice.channel.members:
             music_data[ctx.guild.id].pop(0)
             if music_data[ctx.guild.id]:
-                self.bot.loop.create_task(play_embed(ctx))
+                self.bot.loop.create_task(self.play_embed(ctx))
                 source=discord.FFmpegPCMAudio(music_data[ctx.guild.id][0]["url"], before_options=music_options.before_options, options=music_options.options)
                 ctx.voice_client.play(source, after=lambda s: self.play_after(ctx))
             else:
