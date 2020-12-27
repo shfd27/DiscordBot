@@ -75,8 +75,6 @@ class Music(commands.Cog, name="music"):
 
 
     def search_to_data(self, ctx, search):
-        data={}
-        keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
         import youtube_dl
         ytdl = youtube_dl.YoutubeDL(music_options.ytdl_options)
         raw_data=ytdl.extract_info(search, download=False)
@@ -86,22 +84,44 @@ class Music(commands.Cog, name="music"):
                 raw_data=raw_data[0]
             else:
                 self.bot.loop.create_task(ctx.send("No song detected for **"+str(search)+"**!"))
-                raise Exception("No song from search...")
-        for key in keys:
-            data[key]=raw_data[key]
+                return
+        data={}
+        if raw_data["extractor_key"].startswith("Youtube"):
+            keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
+            for key in keys:
+                data[key]=raw_data[key]
+            data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
+            YOUTUBE_ID=raw_data['channel_id']
+            url=f"https://www.googleapis.com/youtube/v3/channels?part=snippet&id={YOUTUBE_ID}&key={API_KEY}"
+            api = urllib.request.urlopen(url).read()
+            api=eval(str(api.decode("utf-8")))
+            data["icon_url"]=api["items"][0]['snippet']['thumbnails']['high']['url']
+
+        elif raw_data["extractor_key"].startswith("Twitch"):
+            keys=["url", "webpage_url", "uploader", "webpage_url", "thumbnail"]
+            for key in keys:
+                data[key]=raw_data[key]
+
+            data["uploader_url"]=data["webpage_url"]
+            data["title"]=raw_data["description"]
+            if data["title"]==None:
+                data["title"]=raw_data["title"]
+            data["icon_url"]="https://brand.twitch.tv/assets/logos/svg/glitch/purple.svg"
+
+            if "duration" in raw_data:
+                data["duration"]=str(datetime.timedelta(seconds=raw_data["duration"]))
+            else:
+                data["duration"]="live"
+
         return data
 
 
     def play_embed(self, ctx):
             data=music_data[ctx.guild.id][0]
-            YOUTUBE_ID=data['channel_id']
-            url=f"https://www.googleapis.com/youtube/v3/channels?part=snippet&id={YOUTUBE_ID}&key={API_KEY}"
-            api = urllib.request.urlopen(url).read()
-            api=eval(str(api.decode("utf-8")))
-            embed=discord.Embed(title=data['title'], url=data['webpage_url'], color=0xfff0a7) #, description="이것은 Embed입니다."
-            embed.set_author(name=data["uploader"], url=data['uploader_url'], icon_url=api["items"][0]['snippet']['thumbnails']['high']['url'])
-            embed.set_thumbnail(url=data['thumbnail'])
-            embed.add_field(name="Duration", value=str(datetime.timedelta(seconds=data['duration'])), inline=True)
+            embed=discord.Embed(title=data["title"], url=data["webpage_url"], color=0xfff0a7)
+            embed.set_author(name=data["uploader"], url=data["uploader_url"], icon_url=data["icon_url"])
+            embed.set_thumbnail(url=data["thumbnail"])
+            embed.add_field(name="Duration", value=data["duration"], inline=True)
             embed.add_field(name="Requested by", value=ctx.author, inline=True)
             embed.set_footer(text=ctx.author.voice.channel)
             return ctx.channel.send(embed=embed)
@@ -123,6 +143,8 @@ class Music(commands.Cog, name="music"):
                 return
         
         data=self.search_to_data(ctx, search)
+        if data==None:
+            return
         if ctx.guild.id not in music_data.keys():
             music_data[ctx.guild.id]=[]
         if not music_data[ctx.guild.id]:
