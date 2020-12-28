@@ -85,6 +85,10 @@ class Music(commands.Cog, name="music"):
             else:
                 self.bot.loop.create_task(ctx.send("No song detected for **"+str(search)+"**!"))
                 return
+        f=open("docs.txt","wt")
+        for a,b in raw_data.items():
+            f.write(str(a)+" : "+str(b)+"\n")
+        f.close()
         data={}
         if raw_data["extractor_key"].startswith("Youtube"):
             keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
@@ -106,7 +110,7 @@ class Music(commands.Cog, name="music"):
             data["title"]=raw_data["description"]
             if data["title"]==None:
                 data["title"]=raw_data["title"]
-            data["icon_url"]="https://brand.twitch.tv/assets/logos/svg/glitch/purple.svg"
+            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
 
             if "duration" in raw_data:
                 data["duration"]=str(datetime.timedelta(seconds=raw_data["duration"]))
