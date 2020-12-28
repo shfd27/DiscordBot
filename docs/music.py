@@ -272,9 +272,9 @@ class Music(commands.Cog, name="music"):
             if stat==1:
                 volume = volume / 100
                 if volume>1.0:
-                    await ctx.send("volume should be less than **100**!")
+                    await ctx.send("Volume should be less than **100**!")
                 elif volume<=0.0:
-                    await ctx.send("volume should be above **0**!")
+                    await ctx.send("Volume should be above **0**!")
                 else:
                     ctx.voice_client.source.volume = volume
                     await ctx.send("Change volume to **"+str(volume*100)+"**!")
