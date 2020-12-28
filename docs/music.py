@@ -153,6 +153,7 @@ class Music(commands.Cog, name="music"):
             music_data[ctx.guild.id]=[]
         if not music_data[ctx.guild.id]:
             source=discord.FFmpegPCMAudio(data["url"], before_options=music_options.before_options, options=music_options.options)
+            source=discord.PCMVolumeTransformer(source, 0.5)
             ctx.voice_client.play(source, after=lambda s: self.play_after(ctx))
             music_data[ctx.guild.id].append(data)
             await self.play_embed(ctx)
@@ -163,10 +164,16 @@ class Music(commands.Cog, name="music"):
 
     def play_after(self,ctx):
         if self.bot.user in ctx.message.author.voice.channel.members:
+            if "volume" in music_data[ctx.guild.id][0]:
+                volume=music_data[ctx.guild.id][0]["volume"]
+            else:
+                volume=0.5
             music_data[ctx.guild.id].pop(0)
+            music_data[ctx.guild.id][0]["volume"]=volume
             if music_data[ctx.guild.id]:
                 self.bot.loop.create_task(self.play_embed(ctx))
                 source=discord.FFmpegPCMAudio(music_data[ctx.guild.id][0]["url"], before_options=music_options.before_options, options=music_options.options)
+                source=discord.PCMVolumeTransformer(source, volume)
                 ctx.voice_client.play(source, after=lambda s: self.play_after(ctx))
             else:
                 music_data[ctx.guild.id].clear()
@@ -254,6 +261,31 @@ class Music(commands.Cog, name="music"):
                 await ctx.send("No song on queue!")
         else:
             await ctx.send("No song on queue!")
+
+
+    @commands.command(aliases=["v","volume"])
+    async def vol(self, ctx, volume: float):
+        stat=self.check_stat(ctx)
+        if stat==4:
+            await ctx.send("You are not in voice_channel!")
+        else:
+            if stat==1:
+                volume = volume / 100
+                if volume>1.0:
+                    await ctx.send("volume should be less than **100**!")
+                elif volume<=0.0:
+                    await ctx.send("volume should be above **0**!")
+                else:
+                    ctx.voice_client.source.volume = volume
+                    await ctx.send("Change volume to **"+str(volume*100)+"**!")
+                    music_data[ctx.guild.id][0]["volume"]=volume
+            elif stat==2:
+                await ctx.send("Bot is not in voice_channel!")
+            elif stat==3:
+                bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
+                await ctx.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
+        
+
 
 
 
