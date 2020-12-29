@@ -169,8 +169,8 @@ class Music(commands.Cog, name="music"):
             else:
                 volume=0.5
             music_data[ctx.guild.id].pop(0)
-            music_data[ctx.guild.id][0]["volume"]=volume
             if music_data[ctx.guild.id]:
+                music_data[ctx.guild.id][0]["volume"]=volume
                 self.bot.loop.create_task(self.play_embed(ctx))
                 source=discord.FFmpegPCMAudio(music_data[ctx.guild.id][0]["url"], before_options=music_options.before_options, options=music_options.options)
                 source=discord.PCMVolumeTransformer(source, volume)
@@ -272,9 +272,9 @@ class Music(commands.Cog, name="music"):
             if stat==1:
                 volume = volume / 100
                 if volume>1.0:
-                    await ctx.send("Volume should be less than **100**!")
+                    await ctx.send("volume should be less than **100**!")
                 elif volume<=0.0:
-                    await ctx.send("Volume should be above **0**!")
+                    await ctx.send("volume should be above **0**!")
                 else:
                     ctx.voice_client.source.volume = volume
                     await ctx.send("Change volume to **"+str(volume*100)+"**!")
@@ -283,9 +283,7 @@ class Music(commands.Cog, name="music"):
                 await ctx.send("Bot is not in voice_channel!")
             elif stat==3:
                 bot_class_Member=ctx.guild.get_member_named(str(self.bot.user))
-                await ctx.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")
-        
-
+                await ctx.send("You are not in **"+str(bot_class_Member.voice.channel)+"**!")        
 
 
 
