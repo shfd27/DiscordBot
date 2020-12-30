@@ -54,7 +54,7 @@ class Music(commands.Cog, name="music"):
                 await ctx.send("Move to channel **"+str(channel)+"**!")
 
 
-    @commands.command()
+    @commands.command(aliases=["stop"])
     async def leave(self, ctx):
         stat=self.check_stat(ctx)
         if stat==4:
@@ -85,9 +85,11 @@ class Music(commands.Cog, name="music"):
             else:
                 self.bot.loop.create_task(ctx.send("No song detected for **"+str(search)+"**!"))
                 return
+
         data={}
-        if raw_data["extractor_key"].startswith("Youtube"):
-            keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
+        data["extractor_key"]=raw_data["extractor_key"]
+        if data["extractor_key"].startswith("Youtube"):
+            keys=["url", "title", "webpage_url", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
             for key in keys:
                 data[key]=raw_data[key]
             data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
@@ -97,33 +99,67 @@ class Music(commands.Cog, name="music"):
             api=eval(str(api.decode("utf-8")))
             data["icon_url"]=api["items"][0]['snippet']['thumbnails']['high']['url']
 
-        elif raw_data["extractor_key"].startswith("Twitch"):
-            keys=["url", "webpage_url", "uploader", "webpage_url", "thumbnail"]
+        elif data["extractor_key"]=="TwitchStream":
+            keys=["url", "description", "title", "webpage_url", "uploader", "uploader_id", "thumbnail"]
             for key in keys:
                 data[key]=raw_data[key]
-
-            data["uploader_url"]=data["webpage_url"]
-            data["title"]=raw_data["description"]
-            if data["title"]==None:
-                data["title"]=raw_data["title"]
+            if data["description"]!=None:
+                data["title"]=data["description"]
+            data["uploader_url"]="https://www.twitch.tv/"+str(data["uploader_id"])
             data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["duration"]="Live"
 
+        elif data["extractor_key"]=="TwitchVod":
+            keys=["url", "description", "title", "webpage_url", "uploader", "uploader_id", "thumbnail", "duration"]
+            for key in keys:
+                data[key]=raw_data[key]
+            if data["description"]!=None:
+                data["title"]=data["description"]
+            data["uploader_url"]="https://www.twitch.tv/"+str(data["uploader_id"])
+            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
+        
+        elif data["extractor_key"]=="TwitchClips":
+            keys=["url", "title", "webpage_url", "creator", "thumbnail", "duration", "uploader"]
+            for key in keys:
+                data[key]=raw_data[key]
+            data["clip_uploader"]=data["uploader"]
+            data["uploader"]=data["creator"]
+            data["uploader_url"]=data["webpage_url"].split("/clip")[0]
+            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
+
+        else:
+            data["extractor_key"]=None
+            data["url"]=raw_data["url"]
+            data["title"]=raw_data["title"]
             if "duration" in raw_data:
-                data["duration"]=str(datetime.timedelta(seconds=raw_data["duration"]))
+                data["duration"]=raw_data["duration"]
             else:
-                data["duration"]="live"
+                data["duration"]="Unknown"
 
         return data
 
 
     def play_embed(self, ctx):
-            data=music_data[ctx.guild.id][0]
+        data=music_data[ctx.guild.id][0]
+        if data["extractor_key"]!=None:
             embed=discord.Embed(title=data["title"], url=data["webpage_url"], color=0xfff0a7)
             embed.set_author(name=data["uploader"], url=data["uploader_url"], icon_url=data["icon_url"])
             embed.set_thumbnail(url=data["thumbnail"])
             embed.add_field(name="Duration", value=data["duration"], inline=True)
             embed.add_field(name="Requested by", value=ctx.author, inline=True)
-            embed.set_footer(text=ctx.author.voice.channel)
+            if data["extractor_key"]=="TwitchClips":
+                embed.add_field(name="uploaded by", value=data["clip_uploader"], inline=False)
+            embed.set_footer(text=str(data["extractor_key"])+" / "+str(ctx.author.voice.channel))
+            return ctx.channel.send(embed=embed)
+        else:
+            embed=discord.Embed(title=data["title"], url=data["url"], color=0xfff0a7)
+            embed.set_author(name="unkown", icon_url="https://discord.com/assets/6debd47ed13483642cf09e832ed0bc1b.png")
+            embed.set_thumbnail(url="https://cdn.discordapp.com/app-icons/688395885259784212/3ffe7c07e7ca58e5f0069a6f47d9761b.png?size=256")
+            embed.add_field(name="Duration", value=data["duration"], inline=True)
+            embed.add_field(name="Requested by", value=ctx.author, inline=True)
+            embed.set_footer(text=str(ctx.author.voice.channel))
             return ctx.channel.send(embed=embed)
 
 
