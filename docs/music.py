@@ -85,10 +85,6 @@ class Music(commands.Cog, name="music"):
             else:
                 self.bot.loop.create_task(ctx.send("No song detected for **"+str(search)+"**!"))
                 return
-        f=open("docs.txt","wt")
-        for a,b in raw_data.items():
-            f.write(str(a)+" : "+str(b)+"\n")
-        f.close()
         data={}
         if raw_data["extractor_key"].startswith("Youtube"):
             keys=["url", "webpage_url", "title", "uploader", "uploader_url", "thumbnail", "duration", "upload_date", "channel_id"]
