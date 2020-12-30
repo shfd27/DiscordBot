@@ -1,3 +1,5 @@
+# prevent uploading bot_token
 configs/configs.py
+# prevent uploading dump module files
 configs/__pycache__/
 docs/__pycache__/
