@@ -155,7 +155,7 @@ class Music(commands.Cog, name="music"):
             return ctx.channel.send(embed=embed)
         else:
             embed=discord.Embed(title=data["title"], url=data["url"], color=0xfff0a7)
-            embed.set_author(name="unkown", icon_url="https://discord.com/assets/6debd47ed13483642cf09e832ed0bc1b.png")
+            embed.set_author(name="unkown", icon_url="https://github.com/shfd27/shfd27/blob/main/image/discord.png?raw=true")
             embed.set_thumbnail(url="https://cdn.discordapp.com/app-icons/688395885259784212/3ffe7c07e7ca58e5f0069a6f47d9761b.png?size=256")
             embed.add_field(name="Duration", value=data["duration"], inline=True)
             embed.add_field(name="Requested by", value=ctx.author, inline=True)
