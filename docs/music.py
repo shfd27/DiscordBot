@@ -106,7 +106,7 @@ class Music(commands.Cog, name="music"):
             if data["description"]!=None:
                 data["title"]=data["description"]
             data["uploader_url"]="https://www.twitch.tv/"+str(data["uploader_id"])
-            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["icon_url"]="https://github.com/shfd27/shfd27/blob/main/image/twitch.png?raw=true"
             data["duration"]="Live"
 
         elif data["extractor_key"]=="TwitchVod":
@@ -116,7 +116,7 @@ class Music(commands.Cog, name="music"):
             if data["description"]!=None:
                 data["title"]=data["description"]
             data["uploader_url"]="https://www.twitch.tv/"+str(data["uploader_id"])
-            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["icon_url"]="https://github.com/shfd27/shfd27/blob/main/image/twitch.png?raw=true"
             data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
         
         elif data["extractor_key"]=="TwitchClips":
@@ -126,7 +126,7 @@ class Music(commands.Cog, name="music"):
             data["clip_uploader"]=data["uploader"]
             data["uploader"]=data["creator"]
             data["uploader_url"]=data["webpage_url"].split("/clip")[0]
-            data["icon_url"]="https://static-cdn.jtvnw.net/jtv_user_pictures/af39c771-86c1-4b6b-89a9-5c0921344e2b-profile_image-300x300.png"
+            data["icon_url"]="https://github.com/shfd27/shfd27/blob/main/image/twitch.png?raw=true"
             data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
 
         else:
