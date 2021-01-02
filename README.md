@@ -71,6 +71,7 @@ datetime(standard pakage)
 
 
 # Commands
+invite : generate invite link  
 
 ### music.py
 join : join the voice channel  
