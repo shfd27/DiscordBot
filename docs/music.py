@@ -130,20 +130,24 @@ class Music(commands.Cog, name="music"):
             data["duration"]=str(datetime.timedelta(seconds=data["duration"]))
 
         else:
-            data["extractor_key"]=None
+            data["type"]=None
             data["url"]=raw_data["url"]
             data["title"]=raw_data["title"]
             if "duration" in raw_data:
-                data["duration"]=raw_data["duration"]
+                data["duration"]=str(datetime.timedelta(seconds=raw_data["duration"]))
             else:
                 data["duration"]="Unknown"
+            if "thumbnail" in raw_data:
+                data["thumbnail"]=raw_data["thumbnail"]
+            else:
+                data["thumbnail"]=self.bot.user.avatar_url
 
         return data
 
 
     def play_embed(self, ctx):
         data=music_data[ctx.guild.id][0]
-        if data["extractor_key"]!=None:
+        if "type" not in data:
             embed=discord.Embed(title=data["title"], url=data["webpage_url"], color=0xfff0a7)
             embed.set_author(name=data["uploader"], url=data["uploader_url"], icon_url=data["icon_url"])
             embed.set_thumbnail(url=data["thumbnail"])
@@ -156,15 +160,15 @@ class Music(commands.Cog, name="music"):
         else:
             embed=discord.Embed(title=data["title"], url=data["url"], color=0xfff0a7)
             embed.set_author(name="unkown", icon_url="https://github.com/shfd27/shfd27/blob/main/image/discord.png?raw=true")
-            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            embed.set_thumbnail(url=data["thumbnail"])
             embed.add_field(name="Duration", value=data["duration"], inline=True)
             embed.add_field(name="Requested by", value=ctx.author, inline=True)
-            embed.set_footer(text=str(ctx.author.voice.channel))
+            embed.set_footer(text=str(data["extractor_key"])+" / "+str(ctx.author.voice.channel))
             return ctx.channel.send(embed=embed)
 
 
     @commands.command()
-    async def play(self, ctx, *, search):
+    async def play(self, ctx, * , search):
         stat=self.check_stat(ctx)
         if stat==4:
             await ctx.send("You are not in voice_channel!")
@@ -285,7 +289,7 @@ class Music(commands.Cog, name="music"):
 
 
     @commands.command(aliases=["q"])
-    async def queue(self,ctx):
+    async def queue(self, ctx):
         if ctx.guild.id in music_data:
             if music_data[ctx.guild.id]:
                 data=music_data[ctx.guild.id]
