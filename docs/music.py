@@ -10,16 +10,13 @@ import datetime
 API_KEY = music_options.API_KEY
 music_data={}
 
-
 class Music(commands.Cog, name="music"):
     def __init__(self,bot):
         self.bot=bot
 
-
     @commands.command()
     async def test(self, ctx):
         await ctx.send("Bot is working!")
-
 
     def check_stat(self, ctx):
         if ctx.message.author.voice!=None:
